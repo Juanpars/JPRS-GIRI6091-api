@@ -10,16 +10,25 @@ export class TasksRepositoryInMemory implements ITasksRepository {
     return this.tasks;
   }
 
-  async findById(id: string): Promise<Task> {
+  async findById(id: string): Promise<Task | null> {
     const task = this.tasks.find((task) => task.id === id);
-    if (!task) {
-      throw new Error('Task not found');
-    }
-    return task;
+    return task || null;
   }
 
   async create(task: Task): Promise<Task> {
     this.tasks.push(task);
     return task;
+  }
+
+  async update(task: Task): Promise<Task> {
+    const index = this.tasks.findIndex((t) => t.id === task.id);
+    if (index !== -1) {
+      this.tasks[index] = task;
+    }
+    return task;
+  }
+
+  async delete(id: string): Promise<void> {
+    this.tasks = this.tasks.filter((t) => t.id !== id);
   }
 }
